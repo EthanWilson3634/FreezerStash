@@ -9,82 +9,116 @@ struct InventoryView: View {
     @State private var selectedDate: Date = Date() // Default to today's date
     @State private var showDatePicker: Bool = false // State to control visibility of the DatePicker
     
-    // Counter for item names
-    @State private var itemCounter = 1
-    
     var body: some View {
         NavigationView {
-            VStack {
-                // Total ounces label
-                Text("Total Ounces: \(viewModel.totalOunces, specifier: "%.2f")")
-                    .font(.title)
-                    .padding()
+            VStack(spacing: 20) {
+                // Total ounces label with no decimal places
+                Text("Total Ounces: \(Int(viewModel.totalOunces))") // Convert to integer to remove decimals
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.black) // Black text color
+                    .padding(.top, 20)
                 
                 // Toggle to show/hide DatePicker
                 Toggle("Show Date Picker", isOn: $showDatePicker)
-                    .padding()
-                    .toggleStyle(SwitchToggleStyle(tint: .blue)) // Optional: Change color style of the toggle
+                    .padding(.horizontal)
+                    .toggleStyle(SwitchToggleStyle(tint: Color(red: 1.0, green: 0.75, blue: 0.8))) // Soft pink toggle
+                    .foregroundColor(.black) // Black text color
+                    .padding(.top, 10)
                 
-                // Form to add new item
-                HStack {
+                // Form to add new item with more space between elements
+                HStack(spacing: 15) {
                     TextField("Ounces", text: $newItemOunces)
                         .keyboardType(.decimalPad)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding()
+                        .background(Color.pink.opacity(0.2))
+                        .cornerRadius(12)
+                        .shadow(radius: 6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color(red: 1.0, green: 0.75, blue: 0.8), lineWidth: 1) // Soft pink accent for border
+                        )
                     
                     TextField("Oz/Bag", text: $newItemIncrement)
                         .keyboardType(.decimalPad)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding()
+                        .background(Color.pink.opacity(0.2))
+                        .cornerRadius(12)
+                        .shadow(radius: 6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color(red: 1.0, green: 0.75, blue: 0.8), lineWidth: 1) // Soft pink accent for border
+                        )
                     
-                    Button("Add") {
+                    Button(action: {
                         if let ounces = Double(newItemOunces), let increment = Double(newItemIncrement), ounces > 0, increment > 0 {
                             viewModel.addItems(ounces: ounces, increment: increment, date: selectedDate)
                             newItemOunces = ""
                             newItemIncrement = ""
-                            itemCounter += 1
                         }
+                    }) {
+                        Text("Add")
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: 100)
+                            .background(Color.pink.opacity(0.2)) // Soft pink background for the button
+                            .cornerRadius(12)
+                            .shadow(radius: 6)
                     }
-                    .padding()
                 }
+                .padding(.horizontal)
                 
                 // Conditionally show DatePicker based on the toggle
                 if showDatePicker {
                     VStack {
-                        Text("")
-                            .font(.subheadline)
-                            .padding(.top)
+                        Text("Select Date")
+                            .font(.headline)
+                            .foregroundColor(Color(red: 1.0, green: 0.75, blue: 0.8)) // Soft pink color for date picker label
+                            .padding(.top, 10)
                         
                         DatePicker(
                             "",
                             selection: $selectedDate,
                             displayedComponents: [.date] // Display only the date component
                         )
-                        .datePickerStyle(WheelDatePickerStyle()) // You can change the style if desired
+                        .datePickerStyle(WheelDatePickerStyle())
                         .padding()
+                        .background(Color.pink.opacity(0.2))
+                        .cornerRadius(12)
+                        .shadow(radius: 6)
                     }
+                    .padding(.horizontal)
                 }
                 
-                // List of inventory items
+                // List of inventory items with improved layout
                 List {
                     ForEach(viewModel.items) { item in
                         HStack {
-                            VStack(alignment: .leading) {
-                                Text("") // Default name
-                                    .font(.headline)
+                            VStack(alignment: .leading, spacing: 5) {
                                 Text("Added: \(item.dateAdded, formatter: itemDateFormatter)")
                                     .font(.subheadline)
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.black) // Black text color
+                                Text("\(Int(item.ounces)) oz") // Convert to integer to remove decimals
+                                    .font(.headline)
+                                    .foregroundColor(.black) // Black text color
                             }
                             Spacer()
-                            Text("\(item.ounces, specifier: "%.2f") oz")
                         }
+                        .padding()
+                        .background(Color.pink.opacity(0.1))
+                        .cornerRadius(12)
+                        .shadow(radius: 6)
                     }
                     .onDelete(perform: viewModel.removeItem)
                 }
-                .navigationTitle("Milk") // Change this line to "Milk"
-                .navigationBarItems(trailing: EditButton())
+                .listStyle(PlainListStyle())
+                .padding(.horizontal)
+                .padding(.top, 20)
             }
+            .background(FloralBackgroundView()) // Adding floral background
         }
     }
     
@@ -100,5 +134,19 @@ struct InventoryView: View {
 struct ContentView: View {
     var body: some View {
         InventoryView()
+    }
+}
+
+// Custom view for floral background (simple pattern or image)
+struct FloralBackgroundView: View {
+    var body: some View {
+        ZStack {
+            Color.pink.opacity(0.1).edgesIgnoringSafeArea(.all) // Soft background color
+            Image("floral-pattern") // Use your floral image here
+                .resizable()
+                .scaledToFill()
+                .opacity(0.2)
+                .edgesIgnoringSafeArea(.all)
+        }
     }
 }

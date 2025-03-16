@@ -1,14 +1,17 @@
-//
-//  Breastmilk_TrackerApp.swift
-//  Breastmilk Tracker
-//
-//  Created by Rebecca Gordon on 3/12/25.
-//
-
 import SwiftUI
 
 @main
-struct Breastmilk_TrackerApp: App {
+struct BreastmilkTrackerApp: App {
+    // Override the interface style to light mode on app launch
+    init() {
+        // Ensure the app starts in light mode
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+            windowScene.windows.forEach { window in
+                window.overrideUserInterfaceStyle = .light
+            }
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
