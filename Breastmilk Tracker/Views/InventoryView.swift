@@ -32,7 +32,7 @@ struct InventoryView: View {
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding()
                     
-                    TextField("Increment", text: $newItemIncrement)
+                    TextField("Oz/Bag", text: $newItemIncrement)
                         .keyboardType(.decimalPad)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding()
@@ -51,12 +51,12 @@ struct InventoryView: View {
                 // Conditionally show DatePicker based on the toggle
                 if showDatePicker {
                     VStack {
-                        Text("Select Date (Optional)")
+                        Text("")
                             .font(.subheadline)
                             .padding(.top)
                         
                         DatePicker(
-                            "Select Date",
+                            "",
                             selection: $selectedDate,
                             displayedComponents: [.date] // Display only the date component
                         )
