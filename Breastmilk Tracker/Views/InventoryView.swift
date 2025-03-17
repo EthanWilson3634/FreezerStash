@@ -9,6 +9,9 @@ struct InventoryView: View {
     @State private var selectedDate: Date = Date() // Default to today's date
     @State private var showDatePicker: Bool = false // State to control visibility of the DatePicker
     
+    @FocusState private var isOuncesFocused: Bool // Focus state for ounces text field
+    @FocusState private var isIncrementFocused: Bool // Focus state for increment text field
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
@@ -39,6 +42,7 @@ struct InventoryView: View {
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(Color(red: 1.0, green: 0.75, blue: 0.8), lineWidth: 1) // Soft pink accent for border
                         )
+                        .focused($isOuncesFocused) // Set focus state for ounces field
                     
                     TextField("Oz/Bag", text: $newItemIncrement)
                         .keyboardType(.decimalPad)
@@ -51,12 +55,16 @@ struct InventoryView: View {
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(Color(red: 1.0, green: 0.75, blue: 0.8), lineWidth: 1) // Soft pink accent for border
                         )
+                        .focused($isIncrementFocused) // Set focus state for increment field
                     
                     Button(action: {
                         if let ounces = Double(newItemOunces), let increment = Double(newItemIncrement), ounces > 0, increment > 0 {
                             viewModel.addItems(ounces: ounces, increment: increment, date: selectedDate)
                             newItemOunces = ""
                             newItemIncrement = ""
+                            
+                            // Dismiss the keyboard after adding an item
+                            hideKeyboard()
                         }
                     }) {
                         Text("Add")
@@ -119,6 +127,10 @@ struct InventoryView: View {
                 .padding(.top, 20)
             }
             .background(FloralBackgroundView()) // Adding floral background
+            .onTapGesture {
+                // Dismiss the keyboard when tapping outside the TextField areas
+                hideKeyboard()
+            }
         }
     }
     
@@ -128,6 +140,11 @@ struct InventoryView: View {
         formatter.dateStyle = .short
         formatter.timeStyle = .none
         return formatter
+    }
+    
+    // Helper function to hide the keyboard using UIApplication
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
 
