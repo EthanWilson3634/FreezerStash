@@ -28,6 +28,11 @@ struct InventoryView: View {
                     .toggleStyle(SwitchToggleStyle(tint: Color(red: 1.0, green: 0.75, blue: 0.8))) // Soft pink toggle
                     .foregroundColor(.black) // Black text color
                     .padding(.top, 10)
+                    .onChange(of: showDatePicker) { _ in
+                        if !showDatePicker {
+                            selectedDate = Date() // Reset the date to today if DatePicker is hidden
+                        }
+                    }
                 
                 // Form to add new item with more space between elements
                 HStack(spacing: 15) {
