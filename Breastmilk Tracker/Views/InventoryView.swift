@@ -103,7 +103,8 @@ struct InventoryView: View {
                 
                 // List of inventory items with improved layout
                 List {
-                    ForEach(viewModel.items) { item in
+                    // Sort items by date in ascending order (oldest first)
+                    ForEach(viewModel.items.sorted { $0.dateAdded < $1.dateAdded }) { item in
                         HStack {
                             VStack(alignment: .leading, spacing: 5) {
                                 Text("Added: \(item.dateAdded, formatter: itemDateFormatter)")
